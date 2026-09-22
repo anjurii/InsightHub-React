@@ -1,6 +1,6 @@
 # InsightHub
 
-InsightHub is a polished React business intelligence dashboard designed to demonstrate the frontend patterns recruiters look for: reusable components, responsive UX, data visualization, clear information hierarchy, and thoughtful interaction states.
+InsightHub is a business operations workspace for teams that want a quick, practical view of company performance. It brings revenue trends, customer acquisition, orders, and customer records into one place so teams can spot changes, follow up on customer activity, and make better day-to-day decisions from the same workspace.
 
 ## Highlights
 
