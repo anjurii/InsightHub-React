@@ -1,8 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createCustomer, getCustomers, updateCustomer, type CustomerInput } from '../services/customerService'
+import { createCustomer, getCustomer, getCustomers, updateCustomer, type CustomerInput } from '../services/customerService'
+import type { CustomerStatus } from '../types'
 
-export function useCustomers(search: string) {
-  return useQuery({ queryKey: ['customers', search], queryFn: () => getCustomers(search) })
+export function useCustomers(search: string, status: CustomerStatus | 'All', sortOrder: 'asc' | 'desc') {
+  return useQuery({
+    queryKey: ['customers', { search, status, sortOrder }],
+    queryFn: () => getCustomers({ search, status, sortOrder }),
+  })
+}
+
+export function useCustomer(id: string) {
+  return useQuery({ queryKey: ['customers', id], queryFn: () => getCustomer(id), enabled: Boolean(id) })
 }
 
 export function useCreateCustomer() {

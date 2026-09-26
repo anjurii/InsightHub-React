@@ -1,0 +1,47 @@
+[
+  {
+    "id": "cus-1",
+    "name": "Olivia Martin",
+    "email": "olivia.martin@gmail.com",
+    "company": "Luminary Labs",
+    "totalSpend": 24890,
+    "status": "Active",
+    "createdAt": "2024-09-24T10:30:00.000Z"
+  },
+  {
+    "id": "cus-2",
+    "name": "Jackson Lee",
+    "email": "jackson.lee@vertex.io",
+    "company": "Vertex Systems",
+    "totalSpend": 18420,
+    "status": "Active",
+    "createdAt": "2024-09-21T10:30:00.000Z"
+  },
+  {
+    "id": "cus-3",
+    "name": "Sofia Davis",
+    "email": "sofia.davis@orbit.co",
+    "company": "Orbit Commerce",
+    "totalSpend": 15780,
+    "status": "Pending",
+    "createdAt": "2024-09-18T10:30:00.000Z"
+  },
+  {
+    "id": "cus-4",
+    "name": "Liam Wilson",
+    "email": "liam.wilson@acme.com",
+    "company": "Acme Inc.",
+    "totalSpend": 12350,
+    "status": "Active",
+    "createdAt": "2024-09-17T10:30:00.000Z"
+  },
+  {
+    "id": "cus-5",
+    "name": "Ava Thompson",
+    "email": "ava.thompson@northstar.ai",
+    "company": "Northstar AI",
+    "totalSpend": 9840,
+    "status": "Inactive",
+    "createdAt": "2024-09-15T10:30:00.000Z"
+  }
+]

@@ -15,6 +15,7 @@ InsightHub is a business operations workspace for teams that want a quick, pract
 - Typed React + TypeScript implementation with a feature-oriented UI structure
 - Protected routing with persisted demo authentication
 - TanStack Query server-state boundary and Zustand session state
+- JSON-backed mock API fixtures with typed, validated service boundaries
 - React Hook Form + Zod validated customer creation flow
 - Jest/React Testing Library-ready service tests
 - ESLint, Prettier, and GitHub Actions CI
@@ -52,7 +53,8 @@ src/
 ├── app/             # Protected route and application wiring
 ├── features/        # Dashboard, auth, and customer workflows
 ├── hooks/           # TanStack Query hooks
-├── services/        # Typed mock REST boundaries
+├── mocks/data/      # JSON fixtures for auth, workspace, dashboard, customers, and orders
+├── services/        # Mock API functions; replace implementations with HTTP calls
 ├── store/           # Zustand client/session state
 ├── types/           # Shared domain types
 ├── App.tsx          # Query provider and route configuration
@@ -101,15 +103,21 @@ The application is structured for component-level testing with React Testing Lib
 
 ## API integration plan
 
-The local data in `src/services` is intentionally shaped like REST response models. It can be replaced with:
+The local data is stored in JSON fixtures under `src/mocks/data`. UI features do not import these fixtures directly; they call functions in `src/services`, and TanStack Query calls those functions through hooks. The mock services validate fixture data, simulate network latency, and expose API-style parameters for search and filtering. Customer create/update operations are simulated in memory for the current browser session.
+
+When a backend is available, keep the hook and UI interfaces and replace the implementation of the service functions with HTTP requests. For example:
 
 ```text
 GET  /api/dashboard/summary
-GET  /api/customers?page=1&search=...
+GET  /api/customers?search=...&status=...&sortOrder=...
 POST /api/customers
+GET  /api/customers/:id
+PATCH /api/customers/:id
 GET  /api/orders?status=...
 GET  /api/analytics/revenue
 ```
+
+Set `VITE_API_BASE_URL` in the environment for the backend URL when wiring the HTTP service implementations. The mock login credentials and JSON data are demo-only and are not suitable for production authentication or storage.
 
 TanStack Query would own cache, loading, and refetch behavior, while Zustand would hold session, theme, and workspace UI state.
 
