@@ -2,6 +2,17 @@
 
 InsightHub is a business operations workspace for teams that want a quick, practical view of company performance. It brings revenue trends, customer acquisition, orders, and customer records into one place so teams can spot changes, follow up on customer activity, and make better day-to-day decisions from the same workspace.
 
+## Live demo
+
+Try the deployed application: [insighthub-delta.vercel.app](https://insighthub-delta.vercel.app/)
+
+Demo credentials:
+
+```text
+Email: alex@insighthub.dev
+Password: demo123
+```
+
 ## Highlights
 
 - Executive overview with revenue, customer, order, and conversion KPIs
@@ -70,13 +81,6 @@ npm run dev
 ```
 
 Open `http://localhost:5173`.
-
-Use the demo account:
-
-```text
-Email: alex@insighthub.dev
-Password: demo123
-```
 
 Create a production build with:
 
