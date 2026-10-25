@@ -7,5 +7,5 @@
     "noEmit": true,
     "types": ["jest", "node"]
   },
-  "include": ["src"]
+  "include": ["src", "backend/src"]
 }

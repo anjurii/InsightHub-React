@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'jest.config.cjs', 'src/test/styleMock.js'] },
+  { ignores: ['dist', 'dist-backend', 'node_modules', 'jest.config.cjs', 'src/test/styleMock.js'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

@@ -125,6 +125,33 @@ Set `VITE_API_BASE_URL` in the environment for the backend URL when wiring the H
 
 TanStack Query would own cache, loading, and refetch behavior, while Zustand would hold session, theme, and workspace UI state.
 
+## MCP and document search (starter)
+
+The `backend/` directory contains a Node.js/TypeScript MCP server using PostgreSQL with pgvector. It exposes read-only customer/order tools and a knowledge-base search tool. Documents are chunked and embedded with an OpenAI-compatible embeddings endpoint; an MCP client can use the returned passages as RAG context. This starter does not expose a public HTTP MCP endpoint or an in-app chat UI.
+
+Prerequisites:
+
+- Node.js 20 or newer
+- PostgreSQL with the pgvector extension available
+- An OpenAI-compatible API key and embedding model for document ingestion/search
+
+Set the server-only values in `.env` (copy `.env.example`; never expose these as `VITE_` variables), then run:
+
+```bash
+npm install
+npm run db:migrate
+npm run db:seed
+npm run mcp
+```
+
+Configure an MCP host to launch `npm run mcp` from this repository. The server process inherits `DATABASE_URL` and `INSIGHTHUB_WORKSPACE_ID`; it can only query the selected workspace. To index Markdown or text files, run:
+
+```bash
+npm run rag:ingest -- .\path\to\documents
+```
+
+The first version is intended for local development with demo data. Before using real business data or deploying it, replace the demo login with backend-verified authentication and enforce the authenticated user's workspace authorization; a workspace ID in environment configuration is not a substitute for multi-user authorization. Treat database credentials and MCP client access as privileged.
+
 ## CI/CD
 
 The project is ready for a GitHub Actions workflow that runs:
