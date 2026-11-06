@@ -125,39 +125,71 @@ Set `VITE_API_BASE_URL` in the environment for the backend URL when wiring the H
 
 TanStack Query would own cache, loading, and refetch behavior, while Zustand would hold session, theme, and workspace UI state.
 
-## MCP and document search (starter)
+## MCP and document search (local starter)
 
-The `backend/` directory contains a Node.js/TypeScript MCP server using PostgreSQL with pgvector. It exposes read-only customer/order tools and a knowledge-base search tool. Documents are chunked and embedded with an OpenAI-compatible embeddings endpoint; an MCP client can use the returned passages as RAG context. This starter does not expose a public HTTP MCP endpoint or an in-app chat UI.
+The `backend/` directory contains a Node.js/TypeScript MCP server using PostgreSQL with pgvector. It exposes read-only customer/order tools and a knowledge-base search tool to a connected MCP client. Documents are chunked, embedded, and retrieved as context for the client. The server uses MCP over standard input/output; it does not expose a public HTTP endpoint or provide an in-app chat UI. The frontend is not connected to this MCP server and continues to use mock data.
 
 Prerequisites:
 
 - Node.js 20 or newer
 - PostgreSQL with the pgvector extension available
-- An OpenAI-compatible API key and embedding model for document ingestion/search
+- An embedding provider for document ingestion/search: Ollama running locally (no API usage charges; uses local compute), or an OpenAI-compatible API key
 
-Set the server-only values in `.env` (copy `.env.example`; never expose these as `VITE_` variables), then run:
+From PowerShell at the repository root, create a local environment file:
 
-```bash
-npm install
-npm run db:migrate
-npm run db:seed
-npm run mcp
+```powershell
+Copy-Item .env.example .env
 ```
 
-Configure an MCP host to launch `npm run mcp` from this repository. The server process inherits `DATABASE_URL` and `INSIGHTHUB_WORKSPACE_ID`; it can only query the selected workspace. To index Markdown or text files, run:
+Set `DATABASE_URL` to your PostgreSQL connection string and set `INSIGHTHUB_WORKSPACE_ID` to the workspace the server should query. Keep `.env` private; it is ignored by Git. Never put server credentials in `VITE_` variables.
 
-```bash
-npm run rag:ingest -- .\path\to\documents
+### Use local Ollama embeddings (no API key)
+
+Install [Ollama for Windows](https://ollama.com/download/windows), then download the default embedding model:
+
+```powershell
+ollama pull nomic-embed-text
 ```
+
+In `.env`, select the local provider:
+
+```dotenv
+EMBEDDING_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+```
+
+Ollama runs embeddings on your machine, so no `OPENAI_API_KEY` is needed. Alternatively, set `EMBEDDING_PROVIDER=openai` and configure `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPENAI_EMBEDDING_MODEL`.
+
+### Migrate, seed, and run
+
+Install dependencies and initialize the database:
+
+```powershell
+npm.cmd ci
+npm.cmd run db:migrate
+npm.cmd run db:seed
+```
+
+Start the MCP server with `npm.cmd run mcp`, or configure your MCP host to launch that command from the repository root. The MCP client starts the stdio server process; it does not open a browser page. In VS Code, configure the server in `.vscode/mcp.json` and use Copilot Chat in Agent mode with its tools enabled.
+
+To index Markdown or text files, first ensure the selected embedding provider is running, then run:
+
+```powershell
+npm.cmd run rag:ingest -- .\knowledge-docs
+```
+
+The repository includes a fictional sample policy in `knowledge-docs/` for testing. Use only documents you are authorized to send to your configured embedding provider; ingestion sends document text to that provider.
+
+The vector column accepts the dimensions returned by the selected embedding model. Keep the same provider and model for ingestion and search; embeddings from different models cannot be compared meaningfully. If switching models, re-ingest the documents. The dimension-flexible column does not use a fixed-dimension HNSW index, so similarity searches scan the stored chunks in the workspace.
 
 The first version is intended for local development with demo data. Before using real business data or deploying it, replace the demo login with backend-verified authentication and enforce the authenticated user's workspace authorization; a workspace ID in environment configuration is not a substitute for multi-user authorization. Treat database credentials and MCP client access as privileged.
 
-## CI/CD
+## CI
 
-The project is ready for a GitHub Actions workflow that runs:
+GitHub Actions runs the following checks on pushes and pull requests targeting `main`:
 
-1. `npm ci`
-2. TypeScript/Vite production build
-3. Jest + React Testing Library
-4. ESLint and formatting checks
-5. Deployment to the selected static hosting provider
+- `npm ci`
+- `npm run check` (ESLint, Jest tests, TypeScript checks, and production build)
+
+The workflow validates changes; it does not deploy the application.

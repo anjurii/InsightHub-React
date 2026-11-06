@@ -40,13 +40,26 @@ CREATE TABLE IF NOT EXISTS knowledge_chunks (
   title text NOT NULL,
   content text NOT NULL,
   source text NOT NULL,
-  embedding vector(1536) NOT NULL,
+  embedding vector NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (workspace_id, document_id, chunk_index)
 );
 
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM pg_attribute
+    WHERE attrelid = 'knowledge_chunks'::regclass
+      AND attname = 'embedding'
+      AND atttypmod <> -1
+      AND NOT attisdropped
+  ) THEN
+    DROP INDEX IF EXISTS knowledge_chunks_embedding_idx;
+    ALTER TABLE knowledge_chunks
+      ALTER COLUMN embedding TYPE vector USING embedding::vector;
+  END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS knowledge_chunks_workspace_idx
   ON knowledge_chunks (workspace_id);
-
-CREATE INDEX IF NOT EXISTS knowledge_chunks_embedding_idx
-  ON knowledge_chunks USING hnsw (embedding vector_cosine_ops);

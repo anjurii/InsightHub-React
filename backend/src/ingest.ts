@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { basename, relative, resolve } from 'node:path'
-import { createEmbedding, embeddingDimensions } from './embedding.js'
+import { createEmbedding } from './embedding.js'
 import { closePool, getPool, getWorkspaceId } from './db.js'
 import { chunkText } from './rag/chunk.js'
 
@@ -39,9 +39,6 @@ async function ingestDirectory(directory: string): Promise<number> {
         [workspaceId, documentId],
       )
       for (const [index, item] of indexed.entries()) {
-        if (item.embedding.length !== embeddingDimensions) {
-          throw new Error(`Invalid embedding dimensions for ${documentId} chunk ${index}`)
-        }
         await client.query(
           `INSERT INTO knowledge_chunks
              (workspace_id, document_id, chunk_index, title, content, source, embedding)
